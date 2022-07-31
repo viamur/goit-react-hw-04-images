@@ -11,6 +11,7 @@ export class Searchbar extends Component {
   };
   handleSubmit = e => {
     e.preventDefault();
+    if (this.state.query.length === 0) return;
     this.props.onSubmit(this.state.query);
   };
   render() {
