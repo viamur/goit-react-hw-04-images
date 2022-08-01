@@ -15,13 +15,26 @@ export class App extends Component {
     totalHits: null,
     status: 'static',
     forModal: {},
+    error: '',
   };
   /* loading, static, modal, error */
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    if (prevState.receivedData !== this.state.receivedData) {
+      const height = document.body.clientHeight;
+      return height;
+    }
+  }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { query, page, receivedData } = this.state;
     if (prevState.query !== query || prevState.page !== page) {
       this.setState({ status: 'loading' });
       this.dataRequest();
+    }
+    if (prevState.receivedData !== receivedData && page > 1) {
+      window.scrollTo({
+        top: snapshot - 250,
+        behavior: 'smooth',
+      });
     }
   }
 
@@ -36,19 +49,23 @@ export class App extends Component {
       per_page: 12,
     });
     try {
-      const data = await axios.get(`https://pixabay.com/api/?${searchParams}`);
+      const { data } = await axios.get(`https://pixabay.com/api/?${searchParams}`);
+      if (data.totalHits === 0) {
+        throw new Error('Ничего не найдено');
+      }
       this.setState(prevState => ({
-        receivedData: [...prevState.receivedData, ...data.data.hits],
-        totalHits: data.data.totalHits,
+        receivedData: [...prevState.receivedData, ...data.hits],
         status: 'static',
+        totalHits: data.totalHits,
       }));
     } catch (error) {
-      this.setState({ status: 'error' });
+      this.setState({ status: 'error', error });
     }
   }
 
   onSubmit = async query => {
-    this.setState({ query, receivedData: [], page: 1 });
+    if (this.state.query === query && this.state.page === 1) return;
+    this.setState({ query, receivedData: [], page: 1, totalHits: null });
   };
 
   onClick = () => {
@@ -66,9 +83,8 @@ export class App extends Component {
   };
 
   render() {
-    const { page, totalHits, status, forModal, receivedData } = this.state;
+    const { page, totalHits, status, forModal, receivedData, error } = this.state;
     const totalPage = Math.ceil(totalHits / 12);
-
     return (
       <>
         <div className="app">
@@ -80,11 +96,9 @@ export class App extends Component {
             </ImageGallery>
           )}
 
-          {totalHits === 0 && <p style={{ textAlign: 'center' }}>Ничего не найдено</p>}
-
           {status === 'loading' && <Loader />}
 
-          {status === 'error' && <p>ОШИБКА </p>}
+          {status === 'error' && <p style={{ textAlign: 'center' }}>{error.message}</p>}
 
           {totalPage > page && <Button onClick={this.onClick} />}
         </div>
