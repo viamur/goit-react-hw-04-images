@@ -78,7 +78,7 @@ export class App extends Component {
             <p style={{ textAlign: 'center' }}>Ничего не найдено</p>
           ) : (
             <ImageGallery>
-              <ImageGalleryItem data={this.state.receivedData} onOpenModal={this.onOpenModal} />
+              <ImageGalleryItem data={receivedData} onOpenModal={this.onOpenModal} />
             </ImageGallery>
           )}
 
