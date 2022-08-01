@@ -74,13 +74,13 @@ export class App extends Component {
         <div className="app">
           <Searchbar onSubmit={this.onSubmit} />
 
-          {totalHits === 0 ? (
-            <p style={{ textAlign: 'center' }}>Ничего не найдено</p>
-          ) : (
+          {receivedData.length > 0 && (
             <ImageGallery>
               <ImageGalleryItem data={receivedData} onOpenModal={this.onOpenModal} />
             </ImageGallery>
           )}
+
+          {totalHits === 0 && <p style={{ textAlign: 'center' }}>Ничего не найдено</p>}
 
           {status === 'loading' && <Loader />}
 
