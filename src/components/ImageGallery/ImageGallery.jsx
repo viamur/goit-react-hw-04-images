@@ -7,5 +7,5 @@ const ImageGallery = ({ children }) => {
 export default ImageGallery;
 
 ImageGallery.propTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.object,
 };

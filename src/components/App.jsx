@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import Loader from './Loader/Loader';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -23,6 +23,7 @@ export class App extends Component {
       const height = document.body.clientHeight;
       return height;
     }
+    return null;
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { query, page, receivedData } = this.state;
@@ -40,19 +41,9 @@ export class App extends Component {
 
   async dataRequest() {
     const { page, query } = this.state;
-    const searchParams = new URLSearchParams({
-      q: query,
-      page,
-      key: '28511639-fd0b78e787d23185784d45556',
-      image_type: 'photo',
-      orientation: 'horizontal',
-      per_page: 12,
-    });
     try {
-      const { data } = await axios.get(`https://pixabay.com/api/?${searchParams}`);
-      if (data.totalHits === 0) {
-        throw new Error('Ничего не найдено');
-      }
+      const data = await api(query, page);
+
       this.setState(prevState => ({
         receivedData: [...prevState.receivedData, ...data.hits],
         status: 'static',
@@ -72,9 +63,7 @@ export class App extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  onOpenModal = e => {
-    const src = e.target.dataset.src;
-    const alt = e.target.alt;
+  onOpenModal = (src, alt) => {
     this.setState({ status: 'modal', forModal: { src, alt } });
   };
 

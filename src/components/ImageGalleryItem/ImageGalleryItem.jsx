@@ -6,9 +6,8 @@ const ImageGalleryItem = ({ data, onOpenModal }) => {
       <img
         src={el.webformatURL}
         className="imageGalleryItem-image"
-        data-src={el.largeImageURL}
         alt={el.tags}
-        onClick={onOpenModal}
+        onClick={() => onOpenModal(el.largeImageURL, el.tags)}
       />
     </li>
   ));
