@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes, { array } from 'prop-types';
 
 const ImageGallery = ({ children }) => {
   return <ul className="imageGallery">{children}</ul>;
