@@ -45,6 +45,7 @@ export const App = () => {
         behavior: 'smooth',
       });
     }
+    // eslint-disable-next-line
   }, [receivedData]);
 
   const onSubmit = queryA => {
